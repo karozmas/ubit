@@ -1,0 +1,7 @@
+    QDialog {
+                background-color: #fc0000ff;
+            }
+            QLabel {
+                color: #2e7d32;
+                font-size: 14px;
+            }
