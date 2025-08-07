@@ -24,9 +24,9 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QVBoxLayout, QHBoxLayout
                              QMessageBox, QStatusBar, QStackedWidget, QFrame,
                              QFormLayout, QComboBox, QSpacerItem, QSizePolicy,
                              QDialog, QDialogButtonBox, QTableWidget, QTableWidgetItem,
-                             QHeaderView, QAbstractItemView, QTabWidget)
+                             QHeaderView, QAbstractItemView, QTabWidget,QScrollArea)
 # لإنشاء واجهة المستخدم الرسومية
-
+from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtCore import Qt, QSize            # لتحديد اتجاه النصوص والأحداث
 from PyQt5.QtGui import (QFont, QPixmap, QIcon, QPalette, QColor, 
                          QLinearGradient, QBrush)           # لتخصيص مظهر الواجهة الرسومية
@@ -244,9 +244,9 @@ class AddQuestionDialog(QDialog):
 
             الأزرار (موافق/إلغاء)"""
 
-        with open("style/stylesheet1.qss", "r", encoding="utf-8") as f:
-             style1 = f.read()
-        self.setStyleSheet(style1)
+        with open("style/MainWindows.qss", "r", encoding="utf-8") as f:
+             manage_qu = f.read()
+        self.setStyleSheet(manage_qu)
         
         layout = QVBoxLayout()# إنشاء تخطيط عمودي لتنسيق العناصر داخل النافذة
         layout.setAlignment(Qt.AlignRight)# تعيين محاذاة التخطيط إلى اليمين
@@ -262,19 +262,14 @@ class AddQuestionDialog(QDialog):
         categories = self.db_manager.get_categories()# جلب قائمة المجالات (التصنيفات) من قاعدة البيانات
         self.category_combo.addItems(categories)# إضافة المجالات إلى القائمة المنسدلة
         self.category_combo.setEditable(True)# جعل القائمة قابلة للتحرير
-        with open("style/stylesheet2.qss", "r", encoding="utf-8") as f:
-            style2 = f.read()
-        self.category_combo.setStyleSheet(style2) # تعيين نمط القائمة المنسدلة
-
+         # تعيين نمط القائمة المنسدلة
         form.addRow(QLabel("المجال:"), self.category_combo) # إضافة حقل اختيار المجال إلى النموذج
         
         # Question input
         self.question_input = QTextEdit() # إنشاء حقل نصي لإدخال السؤال
         self.question_input.setPlaceholderText("أدخل السؤال هنا...") # تعيين نص توضيحي للحقل
         self.question_input.setMaximumHeight(100) # تعيين الحد الأقصى لارتفاع الحقل
-        with open("style/stylesheet3.qss", "r", encoding="utf-8") as f:
-            style3 = f.read()
-        self.question_input.setStyleSheet(style3) # تعيين نمط حقل السؤال
+       
 
         form.addRow(QLabel("السؤال:"), self.question_input) # إضافة حقل إدخال السؤال إلى النموذج
         
@@ -282,18 +277,13 @@ class AddQuestionDialog(QDialog):
         self.answer_input = QTextEdit() # إنشاء حقل نصي لإدخال الإجابة
         self.answer_input.setPlaceholderText("أدخل الإجابة هنا...")
         self.answer_input.setMaximumHeight(200)
-        with open("style/stylesheet4.qss", "r", encoding="utf-8") as f:
-            style4 = f.read()
-        self.answer_input.setStyleSheet(style4) # تعيين نمط حقل الإجابة
-
+       # تعيين نمط حقل الإجابة
         form.addRow(QLabel("الإجابة:"), self.answer_input) # إضافة حقل إدخال الإجابة إلى النموذج
         
         layout.addLayout(form) # إضافة النموذج إلى التخطيط الرئيسي
         
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel) # إنشاء صندوق أزرار يحتوي على زر "موافق" وزر "إلغاء"
-        with open("style/stylesheetButton.qss", "r", encoding="utf-8") as f:
-            buttons_style = f.read()
-        buttons.setStyleSheet(buttons_style) # تعيين نمط صندوق الأزرار
+         # تعيين نمط صندوق الأزرار
 
         buttons.accepted.connect(self.validate_input)# ربط زر "موافق" بدالة validate_input() للتحقق من صحة المدخلات
         buttons.rejected.connect(self.reject) # ربط زر "إلغاء" بدالة reject() لإغلاق النافذة دون حفظ
@@ -344,7 +334,7 @@ class AdminPanel(QDialog):
         self.init_ui()
     
     def init_ui(self):
-        with open("style/stylesheetAdminPanel.qss", "r", encoding="utf-8") as f:
+        with open("style/MainWindows.qss", "r", encoding="utf-8") as f:
             Adstyle = f.read()
         self.setStyleSheet(Adstyle) # تعيين نمط الواجهة من ملف QSS
         
@@ -368,18 +358,7 @@ class AdminPanel(QDialog):
         
         # Close button
         close_btn = QPushButton("إغلاق")
-        close_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #f44336;
-                color: white;
-                padding: 8px;
-                border-radius: 4px;
-                border: none;
-            }
-            QPushButton:hover {
-                background-color: #d32f2f;
-            }
-        """)
+
         close_btn.clicked.connect(self.close)
         layout.addWidget(close_btn, alignment=Qt.AlignCenter)
     
@@ -403,9 +382,6 @@ class AdminPanel(QDialog):
         # Title
         title = QLabel("إدارة المستخدمين")
         title.setFont(QFont('Arial', 16, QFont.Bold))
-        with open("style/stylesheetTitle.qss", "r", encoding="utf-8") as f:
-            title_style = f.read()  
-        title.setStyleSheet(title_style) # تعيين نمط العنوان من ملف QSS
         title.setAlignment(Qt.AlignCenter)# تعيين محاذاة العنوان إلى المركز
         layout.addWidget(title) # إضافة العنوان إلى التخطيط
         
@@ -441,9 +417,7 @@ class AdminPanel(QDialog):
         
         # Add user button
         self.add_button = QPushButton("إضافة مستخدم") # إنشاء زر لإضافة مستخدم جديد
-        with open("style/stylesheetadduserbutton.qss", "r", encoding="utf-8") as f:
-            add_button_style = f.read()
-        self.add_button.setStyleSheet(add_button_style) # تعيين نمط زر إضافة المستخدم من ملف QSS
+         # تعيين نمط زر إضافة المستخدم من ملف QSS
         self.add_button.clicked.connect(self.add_user) # ربط زر إضافة المستخدم بدالة add_user() لإضافة المستخدم الجديد
         layout.addWidget(self.add_button, alignment=Qt.AlignRight)# إضافة زر إضافة المستخدم إلى التخطيط
         
@@ -456,41 +430,18 @@ class AdminPanel(QDialog):
         # Title
         title = QLabel("إدارة الأسئلة")
         title.setFont(QFont('Arial', 16, QFont.Bold))
-        title.setStyleSheet("color: #2e7d32;")
         title.setAlignment(Qt.AlignCenter)
         layout.addWidget(title)
         
         # Add question button
         add_question_btn = QPushButton("إضافة سؤال جديد")
-        add_question_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #4caf50;
-                color: white;
-                padding: 8px;
-                border-radius: 4px;
-                border: none;
-            }
-            QPushButton:hover {
-                background-color: #388e3c;
-            }
-        """)
+       
         add_question_btn.clicked.connect(self.show_add_question_dialog)
         layout.addWidget(add_question_btn, alignment=Qt.AlignRight)
         
         # Refresh model button
         refresh_btn = QPushButton("تحديث نموذج الأسئلة")
-        refresh_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #2196F3;
-                color: white;
-                padding: 8px;
-                border-radius: 4px;
-                border: none;
-            }
-            QPushButton:hover {
-                background-color: #1976D2;
-            }
-        """)
+        
         refresh_btn.clicked.connect(self.refresh_model)
         layout.addWidget(refresh_btn, alignment=Qt.AlignRight)
         
@@ -626,14 +577,6 @@ class TabukUniversityQA:
             self.data = pd.DataFrame(qustion)
             self.data = self.data.dropna().drop_duplicates(subset=['question'])
             self.data = self.data.apply(lambda x: x.astype(str) if x.dtype == object else x)
-            #self.data = pd.read_csv(path, delimiter=';', encoding='utf-8-sig')
-            
-            #if {'المجال', 'السؤال', 'الجواب'}.issubset(self.data.columns):
-               # self.data.columns = ['category', 'question', 'answer']
-           # elif not {'category', 'question', 'answer'}.issubset(self.data.columns):
-              #  raise ValueError("CSV file missing required columns")
-            
-            
             self.preprocess_data()
             self.train_model()
             print("Data loaded successfully")
@@ -710,15 +653,10 @@ class CreateAccountDialog(QDialog):
     
     def init_ui(self):
         # Set green background
-        self.setStyleSheet("""
-            QDialog {
-                background-color: #e8f5e9;
-            }
-            QLabel {
-                color: #2e7d32;
-                font-size: 14px;
-            }
-        """)
+        with open("style/MainWindows.qss", "r", encoding="utf-8") as f:
+            create_account_style = f.read()
+        self.setStyleSheet(create_account_style)
+       
         
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignRight)
@@ -731,85 +669,27 @@ class CreateAccountDialog(QDialog):
         
         self.username_input = QLineEdit()
         self.username_input.setPlaceholderText("اسم المستخدم")
-        self.username_input.setStyleSheet("""
-            QLineEdit {
-                background-color: white;
-                color: #2e7d32;
-                padding: 8px;
-                border: 1px solid #a5d6a7;
-                border-radius: 4px;
-                font-size: 14px;
-            }
-        """)
+       
         form.addRow(QLabel("اسم المستخدم:"), self.username_input)
         
         self.password_input = QLineEdit()
         self.password_input.setPlaceholderText("كلمة المرور")
         self.password_input.setEchoMode(QLineEdit.Password)
-        self.password_input.setStyleSheet("""
-            QLineEdit {
-                background-color: white;
-                color: #2e7d32;
-                padding: 8px;
-                border: 1px solid #a5d6a7;
-                border-radius: 4px;
-                font-size: 14px;
-            }
-        """)
+
         form.addRow(QLabel("كلمة المرور:"), self.password_input)
         
         self.confirm_password_input = QLineEdit()
         self.confirm_password_input.setPlaceholderText("تأكيد كلمة المرور")
         self.confirm_password_input.setEchoMode(QLineEdit.Password)
-        self.confirm_password_input.setStyleSheet("""
-            QLineEdit {
-                background-color: white;
-                color: #2e7d32;
-                padding: 8px;
-                border: 1px solid #a5d6a7;
-                border-radius: 4px;
-                font-size: 14px;
-            }
-        """)
         form.addRow(QLabel("تأكيد كلمة المرور:"), self.confirm_password_input)
         
         self.user_type_combo = QComboBox()
-        self.user_type_combo.addItems(["طالب", "مسؤول"])
-        self.user_type_combo.setStyleSheet("""
-            QComboBox {
-                background-color: white;
-                color: #2e7d32;
-                padding: 6px;
-                border: 1px solid #a5d6a7;
-                border-radius: 4px;
-                font-size: 14px;
-            }
-            QComboBox::drop-down {
-                border: none;
-            }
-        """)
+        self.user_type_combo.addItems(["طالب"])
         form.addRow(QLabel("نوع المستخدم:"), self.user_type_combo)
         
         layout.addLayout(form)
         
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        buttons.setStyleSheet("""
-            QDialogButtonBox {
-                background-color: transparent;
-            }
-            QPushButton {
-                background-color: #4caf50;
-                color: white;
-                padding: 6px 12px;
-                border: none;
-                border-radius: 4px;
-                min-width: 80px;
-                font-size: 14px;
-            }
-            QPushButton:hover {
-                background-color: #388e3c;
-            }
-        """)
         buttons.accepted.connect(self.validate_input)
         buttons.rejected.connect(self.reject)
         layout.addWidget(buttons)
@@ -852,17 +732,7 @@ class LoginPage(QWidget):
         self.init_ui()
     
     def init_ui(self):
-        # Set green background with gradient
-        self.setStyleSheet("""
-            QWidget {
-                background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
-                                           stop:0 #e8f5e9, stop:1 #c8e6c9);
-            }
-            QLabel {
-                color: #2e7d32;
-            }
-        """)
-        
+
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignCenter)
         layout.setContentsMargins(50, 50, 50, 50)
@@ -885,9 +755,11 @@ class LoginPage(QWidget):
         layout.addWidget(logo_label)
         
         # Title
-        title = QLabel("نظام الإجابة الآلي لجامعة تبوك")
+        title = QLabel("Ubot Academic Assistant")
         title.setFont(QFont('Arial', 18, QFont.Bold))
-        title.setStyleSheet("color: #2e7d32;")
+        with open("style/stylesheetTitle.qss", "r", encoding="utf-8") as f:
+            title_style = f.read()
+        title.setStyleSheet(title_style)
         title.setAlignment(Qt.AlignCenter)
         layout.addWidget(title)
         
@@ -902,56 +774,21 @@ class LoginPage(QWidget):
         self.username.setPlaceholderText("اسم المستخدم")
         self.username.setMinimumWidth(300)
         self.username.setMinimumHeight(40)
-        self.username.setStyleSheet("""
-            QLineEdit {
-                background-color: white;
-                color: #2e7d32;
-                padding: 8px;
-                border: 1px solid #a5d6a7;
-                border-radius: 5px;
-                font-size: 14px;
-            }
-        """)
         form.addRow(QLabel("اسم المستخدم:"), self.username)
         
+
         self.password = QLineEdit()
         self.password.setPlaceholderText("كلمة المرور")
         self.password.setEchoMode(QLineEdit.Password)
         self.password.setMinimumWidth(300)
         self.password.setMinimumHeight(40)
-        self.password.setStyleSheet("""
-            QLineEdit {
-                background-color: white;
-                color: #2e7d32;
-                padding: 8px;
-                border: 1px solid #a5d6a7;
-                border-radius: 5px;
-                font-size: 14px;
-            }
-        """)
         form.addRow(QLabel("كلمة المرور:"), self.password)
-        
         layout.addLayout(form)
         
         # Login Button
         login_btn = QPushButton("تسجيل الدخول")
         login_btn.setFont(QFont('Arial', 14))
         login_btn.setMinimumHeight(45)
-        login_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #4caf50;
-                color: white;
-                border-radius: 5px;
-                padding: 10px;
-                border: none;
-            }
-            QPushButton:hover {
-                background-color: #388e3c;
-            }
-            QPushButton:pressed {
-                background-color: #2e7d32;
-            }
-        """)
         login_btn.clicked.connect(self.login)
         layout.addWidget(login_btn)
         
@@ -960,7 +797,7 @@ class LoginPage(QWidget):
         create_account_btn.setFont(QFont('Arial', 12))
         create_account_btn.setStyleSheet("""
             QPushButton {
-                color: #2e7d32;
+                color: #ACADB9;
                 border: none;
                 padding: 5px;
                 background-color: transparent;
@@ -972,13 +809,7 @@ class LoginPage(QWidget):
         create_account_btn.clicked.connect(self.show_create_account)
         layout.addWidget(create_account_btn, alignment=Qt.AlignCenter)
         
-        # Footer
-        footer = QLabel("© 2025 جامعة تبوك - جميع الحقوق محفوظة")
-        footer.setFont(QFont('Arial', 10))
-        footer.setStyleSheet("color: #689f38;")
-        footer.setAlignment(Qt.AlignCenter)
-        layout.addSpacing(20)
-        layout.addWidget(footer)
+        
         
         self.setLayout(layout)
     
@@ -1014,17 +845,12 @@ class QAApp(QMainWindow):
         self.user_info_label = None
         
         # Set green theme
-        self.setStyleSheet("""
-            QMainWindow {
-                background-color: #e8f5e9;
-            }
-            QLabel {
-                color: #2e7d32;
-            }
-        """)
+        with open("style/MainWindows.qss", "r", encoding="utf-8") as f:
+            main_style = f.read()
+        self.setStyleSheet(main_style)
         
         # Set RTL direction for the main window
-        self.setLayoutDirection(Qt.RightToLeft)
+        self.setLayoutDirection(Qt.LeftToRight)
         
         # Create stacked widget for multiple pages
         self.stacked_widget = QStackedWidget()
@@ -1044,7 +870,7 @@ class QAApp(QMainWindow):
         
         # Start with login page
         self.stacked_widget.setCurrentWidget(self.login_page)
-        self.setWindowTitle("نظام الإجابة الآلي لجامعة تبوك")
+        self.setWindowTitle("Ubot")
         self.setMinimumSize(1000, 750)
         
         # Set window icon
@@ -1098,9 +924,8 @@ class QAApp(QMainWindow):
         header_layout.addWidget(logo_label)
         
         # Title
-        title = QLabel("نظام الإجابة الآلي لجامعة تبوك")
-        title.setFont(QFont('Arial', 18, QFont.Bold))
-        title.setStyleSheet("color: #2e7d32;")
+        title = QLabel("Ubot")
+        title.setFont(QFont('Arial', 30, QFont.Bold))
         title.setAlignment(Qt.AlignCenter)
         header_layout.addWidget(title, alignment=Qt.AlignCenter)
         
@@ -1110,7 +935,6 @@ class QAApp(QMainWindow):
         user_type_display = "مسؤول" if self.user_type == "admin" else "طالب"
         self.user_info_label = QLabel(f"المستخدم: {self.current_user if self.current_user else 'غير مسجل'} ({user_type_display})")
         self.user_info_label.setFont(QFont('Arial', 12))
-        self.user_info_label.setStyleSheet("color: #689f38;")
         self.user_info_label.setAlignment(Qt.AlignCenter)
         header_layout.addWidget(self.user_info_label)
         
@@ -1118,157 +942,84 @@ class QAApp(QMainWindow):
         if self.user_type == "admin":
             admin_btn = QPushButton("لوحة التحكم")
             admin_btn.setFont(QFont('Arial', 12))
-            admin_btn.setStyleSheet("""
-                QPushButton {
-                    background-color: #ff9800;
-                    color: white;
-                    padding: 8px;
-                    border-radius: 5px;
-                    border: none;
-                }
-                QPushButton:hover {
-                    background-color: #f57c00;
-                }
-                QPushButton:pressed {
-                    background-color: #e65100;
-                }
-            """)
+
             admin_btn.clicked.connect(self.show_admin_panel)
             header_layout.addWidget(admin_btn)
         
         # Logout button
         logout_btn = QPushButton("تسجيل الخروج")
         logout_btn.setFont(QFont('Arial', 12))
-        logout_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #e53935;
-                color: white;
-                padding: 8px;
-                border-radius: 5px;
-                border: none;
-            }
-            QPushButton:hover {
-                background-color: #c62828;
-            }
-            QPushButton:pressed {
-                background-color: #b71c1c;
-            }
-        """)
+
         logout_btn.clicked.connect(self.logout)
         header_layout.addWidget(logout_btn)
         
         main_layout.addWidget(header)
         
         # Separator
-        separator = QFrame()
-        separator.setFrameShape(QFrame.HLine)
-        separator.setFrameShadow(QFrame.Sunken)
-        separator.setStyleSheet("color: #a5d6a7;")
-        main_layout.addWidget(separator)
         
-        # Welcome message
-        welcome_label = QLabel("مرحباً بك في نظام الإجابة الآلي. يمكنك طرح أي سؤال متعلق بالقبول الجامعي أو الإجراءات الأكاديمية")
-        welcome_label.setFont(QFont('Arial', 14))
-        welcome_label.setStyleSheet("color: #2e7d32;")
-        welcome_label.setAlignment(Qt.AlignCenter)
-        welcome_label.setWordWrap(True)
-        welcome_label.setLayoutDirection(Qt.RightToLeft)
-        main_layout.addWidget(welcome_label)
+        
+
         
         # Question input area
         question_layout = QHBoxLayout()
         question_layout.setAlignment(Qt.AlignCenter)
         question_layout.setSpacing(15)
         
-        question_label = QLabel("سؤالك:")
-        question_label.setFont(QFont('Arial', 14))
-        question_label.setStyleSheet("color: #2e7d32;")
-        question_label.setAlignment(Qt.AlignCenter)
-        question_label.setLayoutDirection(Qt.RightToLeft)
-        question_layout.addWidget(question_label)
+    
         
+
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setWidgetResizable(True)#  تعيين قابلية تغيير حجم المحتوى
+        self.chat_container = QWidget()
+        self.chat_layout = QVBoxLayout()
+        self.chat_layout.setAlignment(Qt.AlignTop)
+        self.chat_container.setLayout(self.chat_layout)
+        self.scroll_area.setWidget(self.chat_container)
+        main_layout.addWidget(self.scroll_area)
+    
+
+        # Status bar
+        self.status_bar = QStatusBar()
+        self.status_bar.setLayoutDirection(Qt.RightToLeft)
+    
+        self.setStatusBar(self.status_bar)
+        self.status_bar.showMessage("جاهز", 3000)
+         
+        
+        self.lower_layout = QHBoxLayout() # تخطيط الجزء السفلي
+        self.lower_layout.setAlignment(Qt.AlignCenter)
+        self.lower_layout.setSpacing(2)
+
+        # Ask button
+        self.ask_button = QPushButton("➤")
+        self.ask_button.setFont(QFont('Arial', 14))
+        self.ask_button.setFixedSize(55, 55)
+        with open("style/AskButton.qss", "r", encoding="utf-8") as f:
+            ask_button_style = f.read()
+        self.ask_button.setStyleSheet(ask_button_style)
+        self.ask_button.setLayoutDirection(Qt.RightToLeft)
+        self.ask_button.clicked.connect(self.ask_question)
+        self.lower_layout.addWidget(self.ask_button, alignment=Qt.AlignRight)   
+
+       
+        # Question input field
         self.question_input = QLineEdit()
         self.question_input.setPlaceholderText("اكتب سؤالك هنا...")
         self.question_input.setFont(QFont('Arial', 14))
         self.question_input.setMinimumHeight(50)
         self.question_input.setMinimumWidth(500)
-        self.question_input.setStyleSheet("""
-            QLineEdit {
-                background-color: white;
-                color: #2e7d32;
-                padding: 10px;
-                border: 1px solid #a5d6a7;
-                border-radius: 5px;
-                font-size: 14px;
-            }
-        """)
-        self.question_input.setLayoutDirection(Qt.RightToLeft)
+        with open("style/QuestionInput.qss", "r", encoding="utf-8") as f:
+            question_input_style = f.read()
+        self.question_input.setStyleSheet(question_input_style)
+      
+        self.question_input.setLayoutDirection(Qt.LeftToRight)
         self.question_input.returnPressed.connect(self.ask_question)
         question_layout.addWidget(self.question_input)
-        
-        main_layout.addLayout(question_layout)
-        
-        # Ask button
-        self.ask_button = QPushButton("إرسال السؤال")
-        self.ask_button.setFont(QFont('Arial', 14))
-        self.ask_button.setMinimumHeight(50)
-        self.ask_button.setMinimumWidth(200)
-        self.ask_button.setStyleSheet("""
-            QPushButton {
-                background-color: #4caf50;
-                color: white;
-                border-radius: 5px;
-                padding: 10px;
-                border: none;
-            }
-            QPushButton:hover {
-                background-color: #388e3c;
-            }
-            QPushButton:pressed {
-                background-color: #2e7d32;
-            }
-        """)
-        self.ask_button.setLayoutDirection(Qt.RightToLeft)
-        self.ask_button.clicked.connect(self.ask_question)
-        main_layout.addWidget(self.ask_button, alignment=Qt.AlignCenter)
-        
-        # Answer label
-        answer_label = QLabel("الإجابة:")
-        answer_label.setFont(QFont('Arial', 14))
-        answer_label.setStyleSheet("color: #2e7d32;")
-        answer_label.setAlignment(Qt.AlignCenter)
-        answer_label.setLayoutDirection(Qt.RightToLeft)
-        main_layout.addWidget(answer_label)
-        
-        self.answer_display = QTextEdit()
-        self.answer_display.setFont(QFont('Arial', 14))
-        self.answer_display.setReadOnly(True)
-        self.answer_display.setAlignment(Qt.AlignCenter)
-        self.answer_display.setLayoutDirection(Qt.RightToLeft)
-        self.answer_display.setStyleSheet("""
-            QTextEdit {
-                background-color: white;
-                color: #2e7d32;
-                border: 1px solid #a5d6a7;
-                padding: 15px;
-                border-radius: 5px;
-                font-size: 14px;
-            }
-        """)
-        main_layout.addWidget(self.answer_display)
-        
-        # Status bar
-        self.status_bar = QStatusBar()
-        self.status_bar.setLayoutDirection(Qt.RightToLeft)
-        self.status_bar.setStyleSheet("""
-            QStatusBar {
-                background-color: #c8e6c9;
-                color: #2e7d32;
-                border-top: 1px solid #a5d6a7;
-            }
-        """)
-        self.setStatusBar(self.status_bar)
-        self.status_bar.showMessage("جاهز", 3000)
+        self.lower_layout.addLayout(question_layout)
+
+        main_layout.addLayout(self.lower_layout)
+
+
     
     def show_admin_panel(self):
         if self.user_type == "admin":
@@ -1289,14 +1040,54 @@ class QAApp(QMainWindow):
             self.status_bar.showMessage("جارٍ معالجة السؤال...")
             QApplication.processEvents()  # Update UI immediately
             
+            self.add_chat_message(question, sender='user') #عرض سؤال المستخدم 
+
             answer = self.qa_engine.ask_question(question)
-            self.answer_display.setPlainText(answer)
+           
+            self.add_chat_message(answer, sender='bot')  # عرض إجابة النظام
+
+            ##self.answer_display.setPlainText(answer)
+
             self.question_input.clear()
             self.status_bar.showMessage("تمت معالجة السؤال", 3000)
         except Exception as e:
             QMessageBox.critical(self, "خطأ", "حدث خطأ أثناء معالجة السؤال")
             self.status_bar.showMessage("خطأ في معالجة السؤال", 3000)
 
+    def add_chat_message(self,text,sender='user'):
+            message = QLabel(text)
+            message.setWordWrap(True)
+            with open("style/Messageuser.qss", "r", encoding="utf-8") as f:
+                messageuser_style = f.read()
+            with open("style/MessageBot.qss", "r", encoding="utf-8") as f:
+                messageBot_style = f.read()
+            if sender == 'user':
+                message.setStyleSheet(messageuser_style)
+                self.chat_layout.addWidget(message, alignment=Qt.AlignRight)
+
+                
+            else:
+                message.setStyleSheet( messageBot_style)
+                self.chat_layout.addWidget(message, alignment=Qt.AlignLeft)
+            
+            message_container = QWidget()
+            layout = QHBoxLayout()
+            layout.setContentsMargins(10, 5, 10, 5)
+            
+            if sender == 'user':
+                layout.addStretch()
+                layout.addWidget(message)
+            else:
+                layout.addWidget(message)
+                layout.addStretch()
+
+            message_container.setLayout(layout)
+            self.chat_layout.addWidget(message_container)
+
+            QTimer.singleShot(100, lambda: self.scroll_area.verticalScrollBar().setValue(self.scroll_area.verticalScrollBar().maximum()))
+
+
+              
 
 def main():
     app = QApplication([])

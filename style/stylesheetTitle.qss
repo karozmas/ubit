@@ -1,4 +1,4 @@
 QLabel {
-        color: #2e7d32;
-        font-size: 14px;
+        color: #FFFFFF;
+        font-size: 25px;
     }

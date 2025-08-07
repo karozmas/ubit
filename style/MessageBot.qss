@@ -1,0 +1,10 @@
+     QLabel {
+            padding: 10px;
+            border-top-left-radius: 20px;
+            border-bottom-left-radius: 20px;
+            border-top-right-radius: 0px;
+            border-bottom-right-radius: 20px;
+            background-color: #74a8acff;
+            font-size: 20px;
+            color: white;
+        }

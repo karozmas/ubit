@@ -1,8 +1,0 @@
-  QTextEdit {
-                background-color: white;
-                color: #2e7d32;
-                padding: 8px;
-                border: 1px solid #a5d6a7;
-                border-radius: 4px;
-                font-size: 14px;
-            }

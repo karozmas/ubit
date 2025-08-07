@@ -1,0 +1,156 @@
+/*
+QWidget:
+    - يحدد لون خلفية جميع عناصر QWidget إلى لون غامق (#141518).
+    - يضبط لون النص ليكون أبيض.
+
+QMainWindow:
+    - يحدد لون خلفية نافذة التطبيق الرئيسية إلى نفس اللون الغامق (#141518).
+
+QDialog:
+    - يحدد لون خلفية مربعات الحوار (Dialog) إلى اللون الغامق (#141518).
+
+QLabel:
+    - يضبط لون النص في جميع عناصر QLabel ليكون أبيض بالكامل.
+    - يحدد حجم الخط ليكون 14px.
+
+QPushButton (الأول):
+    - يحدد لون خلفية أزرار الضغط إلى لون غامق (#1B1E20).
+    - يضبط لون النص ليكون أبيض.
+    - يضيف حواف دائرية (border-radius) بمقدار 5px.
+    - يضيف مساحة داخلية (padding) بمقدار 10px.
+    - يزيل الحدود الافتراضية.
+
+QTextEdit:
+    - يحدد لون خلفية مربعات النص إلى لون غامق (#232627).
+    - يضبط لون النص ليكون أبيض بالكامل.
+    - يضيف مساحة داخلية (padding) بمقدار 8px.
+    - يضيف حدود بيضاء بالكامل مع حواف دائرية 4px.
+    - يحدد حجم الخط ليكون 14px.
+
+QDialogButtonBox:
+    - يجعل خلفية أزرار مربعات الحوار شفافة.
+
+QPushButton (الثاني):
+    - يغير لون خلفية الأزرار إلى لون غامق (#232627).
+    - يضبط لون النص ليكون أبيض.
+    - يضيف مساحة داخلية (padding) 6px من الأعلى والأسفل و12px من الجانبين.
+    - يزيل الحدود الافتراضية.
+    - يضيف حواف دائرية 4px.
+    - يحدد الحد الأدنى لعرض الزر 80px.
+    - يحدد حجم الخط 14px.
+
+QPushButton:hover و QPushButton:pressed:
+    - يحدد لون خلفية الأزرار عند المرور أو الضغط ليبقى نفس اللون (#232627).
+
+QLineEdit:
+    - يحدد لون خلفية مربعات إدخال النص إلى لون غامق (#232627).
+    - يضبط لون النص ليكون أبيض بالكامل.
+    - يضيف مساحة داخلية (padding) بمقدار 8px.
+    - يضيف حدود بنفس لون الخلفية مع حواف دائرية 5px.
+    - يحدد حجم الخط ليكون 14px.
+
+QTableWidget:
+    - يحدد لون خلفية الجدول إلى لون غامق (#1e1e1e).
+    - يضبط لون النص ليكون أبيض.
+    - يحدد لون خطوط الجدول لتكون بيضاء بالكامل.
+    - يحدد حجم الخط ليكون 13pt.
+
+QHeaderView::section:
+    - يحدد لون خلفية رؤوس الأعمدة إلى لون أزرق رمادي (#70868f).
+    - يضبط لون النص ليكون أبيض مع جعل الخط عريض (bold).
+    - يضيف مساحة داخلية (padding) بمقدار 5px.
+    - يضيف حدود بلون رمادي غامق (#5c5c5cff).
+
+QTableWidget::item:
+    - يحدد لون خلفية خلايا الجدول إلى لون أزرق غامق (#263238).
+    - يضبط لون النص ليكون أبيض.
+    - يضيف مساحة داخلية (padding) بمقدار 5px.
+    - يزيل الحدود.
+
+QTableWidget::item:selected:
+    - يغير لون خلفية الخلية عند تحديدها إلى لون أخضر فاتح (#88af8aff).
+    - يضبط لون النص ليكون أسود.
+*/
+  QWidget {
+        background-color: #141518; /* أو أي لون غامق */
+        color: white;
+                   }
+ QMainWindow {
+               background-color: #141518;
+            }
+    QDialog {
+                background-color: #141518;
+            }
+         QLabel {
+                color: #ffffffff;
+                font-size: 14px;
+            }
+                QPushButton {
+                background-color: #1B1E20;
+                color: white;
+                border-radius: 5px;
+                padding: 10px;
+                border: none;
+            }
+              QTextEdit {
+                background-color:  #232627;
+                color: #ffffffff;
+                padding: 8px;
+                border: 1px solid #ffffffff;
+                border-radius: 4px;
+                font-size: 14px;
+            }
+            QDialogButtonBox {
+                background-color: transparent;
+            }
+            QPushButton {
+                background-color:  #232627;
+                color: white;
+                padding: 6px 12px;
+                border: none;
+                border-radius: 4px;
+                min-width: 80px;
+                font-size: 14px;
+            }
+            QPushButton:hover {
+                background-color: #232627;
+            }
+            QPushButton:pressed {
+                background-color: #232627;
+            }
+                 QLineEdit {
+                background-color: #232627;
+                color: #ffffffff;
+                padding: 8px;
+                border: 1px solid  #232627;
+                border-radius: 5px;
+                font-size: 14px;
+            }
+
+               
+           QTableWidget {
+        background-color: #1e1e1e;       /* خلفية الجدول */
+        color: white;                    /* لون النص */
+        gridline-color: #ffffffff;         /* لون الخطوط الفاصلة بين الخلايا */
+        font-size: 13pt;
+    }
+
+    QHeaderView::section {
+          background-color: #70868f;   /* خلفية عناوين الأعمدة */
+        color: white;
+        font-weight: bold;
+        padding: 5px;
+        border: 1px solid #5c5c5cff;
+    }
+
+    QTableWidget::item {
+        background-color: #263238;       /* لون خلفية الخلايا */
+        color: #ffffff;
+        padding: 5px;
+        border: none;
+    }
+
+    QTableWidget::item:selected {
+        background-color: #88af8aff;       /* لون خلفية الخلية عند التحديد */
+        color: black;
+    }
