@@ -29,7 +29,7 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QVBoxLayout, QHBoxLayout
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtCore import Qt, QSize            # لتحديد اتجاه النصوص والأحداث
 from PyQt5.QtGui import (QFont, QPixmap, QIcon, QPalette, QColor, 
-                         QLinearGradient, QBrush)           # لتخصيص مظهر الواجهة الرسومية
+                         QLinearGradient, QBrush)           # لتخصيص مظهر الواجهة
                                     
 from firebase_config import db         # استيراد كائن قاعدة البيانات من ملف firebase_config.py
 
