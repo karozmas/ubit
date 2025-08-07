@@ -92,9 +92,7 @@ class DatabaseManager:                     # هذه الكلاس مسؤول عن
         #في البداية يكون None (فارغ) حتى يتم ملؤه من load_data().
         self.load_data() #  تحميل البيانات من ملف firebase عند إنشاء الكائن
       
-    def load_data(self): # هذه الدالة تقوم بتحميل البيانات من ملف CSV
-       
-        
+    def load_data(self): # هذه الدالة تقوم بتحميل البيانات من ملف firebase إلى self.data
         """load_data() مسؤولة عن:
          قراءة ملف firebase.
          معالجة البيانات (تنظيفها، التحقق من الأعمدة).
@@ -111,7 +109,6 @@ class DatabaseManager:                     # هذه الكلاس مسؤول عن
                     qustion.append(data) #  يتحقق مما إذا كانت جميع المفاتيح المطلوبة موجودة في البيانات (category, question, answer)
         
             self.data = pd.DataFrame(qustion) #  ثم يحول قائمة الأسئلة إلى DataFrame ويخزنها في self.data
-           ## print(self.data.head(2))
            
             """ 
              مثال:
@@ -119,10 +116,6 @@ class DatabaseManager:                     # هذه الكلاس مسؤول عن
              print({'المجال', 'السؤال'}.issubset(columns))  # ✅ True
              print({'الاسم', 'السؤال'}.issubset(columns))   # ❌ False
              """
-            #self.data.columns = ['category', 'question', 'answer']
-            #elif not {'category', 'question', 'answer'}.issubset(self.data.columns):
-              #  raise ValueError("CSV file missing required columns")
-            # إذا لم تكن الأعمدة المطلوبة موجودة، يرفع استثناء ValueError.
             
             self.data = self.data.dropna().drop_duplicates(subset=['question'])
             #  يحذف أي صفوف تحتوي على قيم فارغة (NaN) أو مكررة في عمود 'question'.
@@ -162,7 +155,6 @@ class DatabaseManager:                     # هذه الكلاس مسؤول عن
             return False
         
 
-        
     
     def add_question(self, category, question, answer):# هذه الدالة تقوم بإضافة سؤال جديد إلى قاعدة البيانات
         
@@ -187,19 +179,7 @@ class DatabaseManager:                     # هذه الكلاس مسؤول عن
             print(f"Error adding question: {e}")
             return False
         
-       # self.data = pd.concat([self.data, new_row], ignore_index=True)
-        #  تستخدم pd.concat لدمج البيانات الجديدة مع البيانات الحالية.
-        # ignore_index=True تعيد تعيين الفهرس (index) للبيانات المدمجة.
-        """        مثال:
-         **قبل الإضافة:**
-        index | category | question          | answer
-        0     | القبول   | ما هو القبول؟     | من 1 إلى 10 يوليو
-
-        fبعد الإضافة:
-        index | category | question          | answer
-        0     | القبول   | ما هو القبول؟     | من 1 إلى 10 يوليو
-        1     | التسجيل  | ما هي الشروط؟     | بعد التسجيل في الجامعة
-        """
+ 
     
     
     def get_categories(self):
@@ -955,19 +935,13 @@ class QAApp(QMainWindow):
         
         main_layout.addWidget(header)
         
-        # Separator
-        
-        
 
-        
         # Question input area
         question_layout = QHBoxLayout()
         question_layout.setAlignment(Qt.AlignCenter)
         question_layout.setSpacing(15)
-        
-    
-        
 
+        # Chat area
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)#  تعيين قابلية تغيير حجم المحتوى
         self.chat_container = QWidget()
@@ -981,11 +955,10 @@ class QAApp(QMainWindow):
         # Status bar
         self.status_bar = QStatusBar()
         self.status_bar.setLayoutDirection(Qt.RightToLeft)
-    
         self.setStatusBar(self.status_bar)
         self.status_bar.showMessage("جاهز", 3000)
          
-        
+        # Lower layout for question input and ask button
         self.lower_layout = QHBoxLayout() # تخطيط الجزء السفلي
         self.lower_layout.setAlignment(Qt.AlignCenter)
         self.lower_layout.setSpacing(2)
