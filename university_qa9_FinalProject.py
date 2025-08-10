@@ -32,13 +32,14 @@ from PyQt5.QtGui import (QFont, QPixmap, QIcon, QPalette, QColor,
                          QLinearGradient, QBrush)           # لتخصيص مظهر الواجهة
                                     
 from firebase_config import db         # استيراد كائن قاعدة البيانات من ملف firebase_config.py
-
+from datetime import datetime
 
 
 class UserDatabase: 
    
     def add_user(self, username, password, user_type):               # هذه الدالة تقوم بإضافة مستخدم جديد إلى قاعدة البيانات
         self.user_ref = db.collection('users').document(username)
+         
         if self.user_ref.get().exists:                #  تستخدم Firebase للتحقق مما إذا كان اسم المستخدم موجودًا بالفعل في قاعدة البيانات
             return False
                              # إذا كان اسم المستخدم موجودًا بالفعل، تعيد الدالة False
@@ -66,7 +67,7 @@ class UserDatabase:
         self.users = {}                                                    #  هذه الدالة تقوم بجلب جميع المستخدمين من قاعدة البيانات
         self.docs = db.collection('users').stream()                        #  يستخدم Firebase لجلب جميع وثائق المستخدمين من مجموعة 'users'
         for doc in self.docs:                                              #  يقوم بتكرار كل وثيقة مستخدم
-            self.users[doc.id] = doc.to_dict()                            #  ويحفظ اسم المستخدم (doc.id) وبياناته (doc.to_dict()) في القاموس self.users
+            self.users[doc.id] = doc.to_dict()                         #  ويحفظ اسم المستخدم (doc.id) وبياناته (doc.to_dict()) في القاموس self.users
         return self.users                                              # هذه الدالة تعيد جميع المستخدمين في قاعدة البيانات كقاموس
     
     def delete_user(self, username):
@@ -241,7 +242,7 @@ class AddQuestionDialog(QDialog):
         self.category_combo = QComboBox()# إنشاء قائمة منسدلة لاختيار المجال (التصنيف)
         categories = self.db_manager.get_categories()# جلب قائمة المجالات (التصنيفات) من قاعدة البيانات
         self.category_combo.addItems(categories)# إضافة المجالات إلى القائمة المنسدلة
-        self.category_combo.setEditable(True)# جعل القائمة قابلة للتحرير
+        self.category_combo.setEditable(False)# جعل القائمة قابلة للتحرير
          # تعيين نمط القائمة المنسدلة
         form.addRow(QLabel("المجال:"), self.category_combo) # إضافة حقل اختيار المجال إلى النموذج
         
@@ -250,7 +251,6 @@ class AddQuestionDialog(QDialog):
         self.question_input.setPlaceholderText("أدخل السؤال هنا...") # تعيين نص توضيحي للحقل
         self.question_input.setMaximumHeight(100) # تعيين الحد الأقصى لارتفاع الحقل
        
-
         form.addRow(QLabel("السؤال:"), self.question_input) # إضافة حقل إدخال السؤال إلى النموذج
         
         # Answer input
@@ -365,10 +365,12 @@ class AdminPanel(QDialog):
         title.setAlignment(Qt.AlignCenter)# تعيين محاذاة العنوان إلى المركز
         layout.addWidget(title) # إضافة العنوان إلى التخطيط
         
+        #ثواني
+
         # Table of users
         self.users_table = QTableWidget() # إنشاء جدول لعرض المستخدمين
-        self.users_table.setColumnCount(3) # تعيين عدد الأعمدة في الجدول إلى 3
-        self.users_table.setHorizontalHeaderLabels(["اسم المستخدم", "نوع المستخدم", "الإجراءات"])# تعيين أسماء الأعمدة في الجدول
+        self.users_table.setColumnCount(4) # تعيين عدد الأعمدة في الجدول إلى 3
+        self.users_table.setHorizontalHeaderLabels(["اسم المستخدم", "نوع المستخدم", "الإجراءات","تركي"])# تعيين أسماء الأعمدة في الجدول
         self.users_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)# تعيين حجم الأعمدة لتمتد لتملأ العرض المتاح
         self.users_table.setEditTriggers(QAbstractItemView.NoEditTriggers)# منع تحرير الخلايا في الجدول
         self.users_table.verticalHeader().setVisible(False) # إخفاء رؤوس الصفوف في الجدول
@@ -446,8 +448,9 @@ class AdminPanel(QDialog):
             user_type = "مسؤول" if user_data['type'] == 'admin' else "طالب"
             self.users_table.setItem(row, 1, QTableWidgetItem(user_type))
             
+            
             # Don't allow deleting admin user
-            if username == 'admin':
+            if user_data['type'] == 'admin':
                 self.users_table.setItem(row, 2, QTableWidgetItem("غير مسموح"))
             else:
                 delete_btn = QPushButton("حذف")
@@ -463,8 +466,11 @@ class AdminPanel(QDialog):
                         background-color: #d32f2f;
                     }
                 """)
+
                 delete_btn.clicked.connect(lambda _, u=username: self.delete_user(u))
                 self.users_table.setCellWidget(row, 2, delete_btn)
+                user = user_data['password']
+                self.users_table.setItem(row,3,QTableWidgetItem(user))
     
     def load_questions(self):
         questions = self.db_manager.data
@@ -509,9 +515,9 @@ class AdminPanel(QDialog):
             else:
                 QMessageBox.warning(self, "خطأ", "فشل حذف المستخدم")
     
-    def show_add_question_dialog(self):
+    def show_add_question_dialog(self): #
         dialog = AddQuestionDialog(self.db_manager, self)
-        if dialog.exec_() == QDialog.Accepted:
+        if dialog.exec_() == QDialog.Accepted: # يوقف الكود موقتا حتا يواقق ام يرفض 
             self.load_questions()
     
     def refresh_model(self):
@@ -541,10 +547,10 @@ class TabukUniversityQA:
         self.vectorizer = TfidfVectorizer(ngram_range=(1, 2), min_df=2, max_df=0.8)
         self.data = data  # DataFrame containing the questions and answers
         self.tfidf_matrix = None
-        
-        self.preprocess_data()
-        self.train_model()
-        print("Data loaded successfully")
+        self.now = datetime.now()
+        self.hour = self.now.hour
+        self.minute = self.now.minute
+        print("tm tdripppppppppp@")
 
     def load_data(self):
         try:
@@ -587,7 +593,7 @@ class TabukUniversityQA:
             raise ValueError("No data loaded")
         self.vectorizer.fit(self.data['combined_text'])
         self.tfidf_matrix = self.vectorizer.transform(self.data['combined_text'])
-    
+        
     def ask_question(self, question, threshold=0.25):
         try:
             if not question or not isinstance(question, str):
@@ -642,6 +648,8 @@ class CreateAccountDialog(QDialog):
         layout.setAlignment(Qt.AlignRight)
         self.setLayout(layout)
         
+      
+
         form = QFormLayout()
         form.setLabelAlignment(Qt.AlignRight)
         form.setFormAlignment(Qt.AlignRight)
@@ -649,13 +657,11 @@ class CreateAccountDialog(QDialog):
         
         self.username_input = QLineEdit()
         self.username_input.setPlaceholderText("اسم المستخدم")
-       
         form.addRow(QLabel("اسم المستخدم:"), self.username_input)
         
         self.password_input = QLineEdit()
         self.password_input.setPlaceholderText("كلمة المرور")
         self.password_input.setEchoMode(QLineEdit.Password)
-
         form.addRow(QLabel("كلمة المرور:"), self.password_input)
         
         self.confirm_password_input = QLineEdit()
@@ -768,6 +774,7 @@ class LoginPage(QWidget):
         # Login Button
         login_btn = QPushButton("تسجيل الدخول")
         login_btn.setFont(QFont('Arial', 14))
+        login_btn.setStyleSheet("background-color: black;")
         login_btn.setMinimumHeight(45)
         login_btn.clicked.connect(self.login)
         layout.addWidget(login_btn)
@@ -844,7 +851,7 @@ class QAApp(QMainWindow):
         
         # Add pages to stacked widget
         self.stacked_widget.addWidget(self.login_page)
-        self.stacked_widget.addWidget(self.main_page)
+       
         
         self.init_main_ui()
         
@@ -861,7 +868,6 @@ class QAApp(QMainWindow):
             self.setWindowIcon(QIcon(icon_pixmap))
         except:
             pass
-    
     def switch_to_main_app(self):
         # Reinitialize the main page to update the user info
         self.main_page = QWidget()
@@ -984,8 +990,7 @@ class QAApp(QMainWindow):
         with open("style/QuestionInput.qss", "r", encoding="utf-8") as f:
             question_input_style = f.read()
         self.question_input.setStyleSheet(question_input_style)
-      
-        self.question_input.setLayoutDirection(Qt.LeftToRight)
+        self.question_input.setLayoutDirection(Qt.RightToLeft)
         self.question_input.returnPressed.connect(self.ask_question)
         question_layout.addWidget(self.question_input)
         self.lower_layout.addLayout(question_layout)
@@ -1039,9 +1044,11 @@ class QAApp(QMainWindow):
                 self.chat_layout.addWidget(message, alignment=Qt.AlignRight)
 
                 
-            else:
+            else: 
                 message.setStyleSheet( messageBot_style)
                 self.chat_layout.addWidget(message, alignment=Qt.AlignLeft)
+               
+                
             
             message_container = QWidget()
             layout = QHBoxLayout()
@@ -1059,8 +1066,6 @@ class QAApp(QMainWindow):
 
             QTimer.singleShot(100, lambda: self.scroll_area.verticalScrollBar().setValue(self.scroll_area.verticalScrollBar().maximum()))
 
-
-              
 
 def main():
     app = QApplication([])
